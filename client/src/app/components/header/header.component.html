@@ -1,0 +1,70 @@
+<div class="toolbar" role="banner">
+  <div>
+    <img width="40" alt="Angular Logo"
+      src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==" />
+    <a mat-button class="mr-5" [routerLink]="['/']">Home</a>
+    <a mat-button class="mr-5" [routerLink]="['/shop']">Shop</a>
+  </div>
+  <div>
+    <div *ngIf="um.loggedInUser.username">
+      <button mat-button>{{ um.userLocation.name }},&nbsp;{{ um.userLocation.region }}&nbsp;{{ um.userLocation.temperatureF }}F</button>
+      <button mat-raised-button color="primary" [matBadge]="notificationService.currentNotificationNumber || undefined"
+        matBadgePosition="before" matBadgeColor="accent" [matMenuTriggerFor]="noficatiton"
+        (click)="notificationService.readAll()">
+        Notifications
+      </button>
+      <button mat-raised-button color="primary" [matBadge]="cs.itemsInCart || undefined" matBadgePosition="before"
+        matBadgeColor="accent" [matMenuTriggerFor]="cart" style="margin-left: 1rem;" (click)="onCartBtnClick()">
+        Cart
+      </button>
+      </div>
+    <mat-menu #cart="matMenu">
+      <div *ngIf="!cs.cart.items.length;else other1" style="box-sizing: border-box;padding: 0 2rem;">
+        <div style="text-align: center;">Your cart is empty!</div>
+        <br><br>
+        <div style="text-align: right;">Subtotal: {{ cs.total }}&nbsp;Poké Token</div>
+        <div style="text-align: right;">In your pocket: {{ currentCoins }}&nbsp;Poké Token</div>
+      </div>
+      <ng-template #other1>
+        <div style="padding: 0 1rem;">
+          <app-cart-item *ngFor="let item of cs.cart.items" [title]="item.name" [price]="item.price"
+            [quantities]="item.quantities" [img]="item.photo">
+          </app-cart-item>
+          <div style="text-align: right;">Subtotal: {{ cs.total }}&nbsp;Poké Token</div>
+          <div style="text-align: right;">In your pocket: {{ currentCoins }}&nbsp;Poké Token</div>
+          <button mat-raised-button color="primary" style="width: 100%;" (click)="checkout($event)">
+            Checkout
+          </button>
+        </div>
+      </ng-template>
+    </mat-menu>
+    <mat-menu #noficatiton="matMenu">
+      <button mat-menu-item *ngIf="!notificationService.listOfNotifications.length;else other">
+        Nothing here...
+      </button>
+      <ng-template #other>
+        <button mat-menu-item *ngFor="let item of notificationService.listOfNotifications" style="height: 100px">
+          <mat-card-header>
+            <div style="line-height: 22px;">{{ item.title }}</div>
+          </mat-card-header>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <div *ngFor="let b of item.body" style="line-height: 22px;"> {{ b }} </div>
+            <mat-divider></mat-divider>
+            <div style="line-height: 22px;">{{ item.date | date }}</div>
+          </mat-card-content>
+        </button>
+      </ng-template>
+    </mat-menu>
+    <button mat-button (click)="openDialog()" *ngIf="!um.loggedInUser.username">Log In</button>
+    <div *ngIf="um.loggedInUser.username">
+      <button mat-button [matMenuTriggerFor]="menu">{{ um.loggedInUser.username }}</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item [routerLink]="['/user']">Preferences</button>
+        <button mat-menu-item [routerLink]="['/payment']">Buy Tokens</button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="um.logout()">Logout</button>
+      </mat-menu>
+    </div>
+  </div>
+</div>
